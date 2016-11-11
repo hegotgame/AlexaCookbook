@@ -35,5 +35,6 @@
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
-index.zip
+*.zip
+
 .DS_Store

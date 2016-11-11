@@ -8,16 +8,23 @@ Alexa skills follow the same model.  Basic ingredients can be added together to 
 
 The lessons assume you have built a skill with the [Alexa Skills Kit](https://developer.amazon.com/ask) .
 
-If you are new to Alexa, first complete the [tutorial to build the Flash Cards sample skill](https://developer.amazon.com/public/community/post/Tx2YNDI2WP6O21S/New-Alexa-Skills-Kit-Template-Step-by-Step-Guide-to-Build-a-Flash-Cards-Skill) .
+If you are new to Alexa, first complete the [Decision Tree](https://bit.ly/alexadecisionvid) tutorial.
+
+* Recommend having [Node.JS](https://nodejs.org/en/) available on your command prompt and become familiar with [NPM](https://www.npmjs.com), the Node Package Manager
+* Recommend having [GIT](http://www.git.com) available on your command prompt
+* Review the [alexa-sdk](https://www.npmjs.com/package/alexa-sdk) documentation
 
 Ready to begin?
-1. Create the [Hello World](./HelloWorld/) skill
-2. Select from one of the recipes to learn how to combine ingredients together
+Choose a recipe below and follow the tutorial steps to create and enhance a new skill.
 
 
-* [Random Greeting](./RandomGreeting)
-  * Say a random greeting upon each execution
-* [State Pop](CallService)
-  * Call out to a public REST Web Service
-  * Use a custom slot with type AMAZON.US_STATE
+*  #### Recipe 1 [State Pop](StatePop)
+   We start with a basic skill that plays a welcome message, responds to Help and Stop; and listens for you to say the name of a US State
+   We will then add a feature to let you tell the skill your name, which is stored and repeated when you end your conversation.
+   Finally, we will add helper functions to look up and report on the Population of each state, using data from a file or from a REST API call.
 
+*  #### Recipe 2 [Coming Soon](Coming Soon)
+   Basic skill with Launch, Help, Stop handlers;
+   Add code to have skill write to SQS queue
+   Deploy Single Page Webapp that connects to AWSd
+   Add browser code to long poll SQS and update page
