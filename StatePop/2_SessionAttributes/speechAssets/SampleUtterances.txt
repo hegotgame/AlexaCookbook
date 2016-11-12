@@ -1,11 +1,12 @@
 
+MyNameIsIntent my name is {myName}
+MyNameIsIntent call me {myName}
+
 StateRequestIntent {usstate}
 StateRequestIntent describe {usstate}
 StateRequestIntent how about {usstate}
 StateRequestIntent go to {usstate}
 
-MyNameIsIntent my name is {myName}
-MyNameIsIntent call me {myName}
 
 RecapIntent recap
 RecapIntent summary
