@@ -109,14 +109,15 @@ in this particular case, the population value we want is returned as an object w
 It may be easier to test and troubleshoot your API call code if you first build it as a standalone Javascript file and test it locally.
 
 If you have Node.JS running locally, you can execute a local version of the State Population API call with the following steps.
-1. In a command prompt, navigate into the `3_DataAccess\tests` folder
-2. Type `node test_rest.js`
 
-This script will call the API and return JSON for the state population of Maine.
+  1. In a command prompt, navigate into the `3_DataAccess\tests` folder
+  2. Type `node test_rest.js`
 
-Now you can hack up this script to make it call your API, and quickly test and troubleshoot until you get it returning the results you want.
+This script, [test_rest.js](tests/test_rest.js), will call the API and output the JSON for the state population of Maine.
+
+Now you can hack up this script to make it call your API, and quickly test and troubleshoot until you get it returning the results you want.  Then, you can copy the relevant code back into your Lambda function code.
 
 
 
-You have completed the State Pop recipe tutorial.  Congratulations!
+###### You have completed the State Pop recipe tutorial.  Congratulations!
 
