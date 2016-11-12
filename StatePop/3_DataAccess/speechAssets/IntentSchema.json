@@ -15,7 +15,7 @@
       "slots":[
         {
           "name":"myName",
-          "type":"AMAZON.FIRST_NAME"
+          "type":"AMAZON.US_FIRST_NAME"
         }
       ]
     },
