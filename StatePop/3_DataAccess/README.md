@@ -8,8 +8,8 @@ or by calling across the Internet to a public REST API.
 #### 1. Data Access via included data file
 ##### Steps:
 
-1. Notice a new folder and file under the `src` folder:  `/src/datafiles/dataset.js`
-2. Navigate into the /src folder, select all files and folders and right click to compress into a new Zip archive.
+1. Click the `src` folder above, and notice a new folder and file under the `src` folder:  `/src/datafiles/dataset.js`
+2. On your local laptop, navigate into the 3_DataAccess/src folder, select all files and folders and right click to compress into a new Zip archive.
 3. Within your AWS Lambda function, upload this Zip archive to the function and click "Save".
 
 ##### Test:
@@ -23,7 +23,7 @@ or by calling across the Internet to a public REST API.
 ##### Learn:
 The skill code includes new functions, listed below the main function and handler functions.
 
-`getPopFromArray` makes reference to an external file, opens the file, and loops through results.
+`getPopFromArray()` makes reference to an external file, opens the file, and loops through each element of an array in the file until a matching row is found.
 
 This function is called from the StateRequestIntent handler.
 
@@ -66,7 +66,7 @@ function getPopFromAPI (myState, callback) {
     var population = 0;
     var rank = 0;
 
-    var post_data = {"usstate": myState};
+    var post_data = {"usstate": myState};  // for example, {"usstate": "Delaware"}
 
     var post_options = {
         host:  'rmwum5l4zc.execute-api.us-east-1.amazonaws.com',
@@ -99,5 +99,24 @@ function getPopFromAPI (myState, callback) {
 
 }
 ```
+
+#### Customizing your API call
+To call your own API, be sure to modify the post_option values such as host, port, path, etc.
+Be sure you are familiar with your API's expected input and output.  You may also need to add authentication details in the request, depending on the API provider's requirements.
+The example above sends a small block of JSON to the API and receives another block of JSON,
+in this particular case, the population value we want is returned as an object within an array.
+
+It may be easier to test and troubleshoot your API call code if you first build it as a standalone Javascript file and test it locally.
+
+If you have Node.JS running locally, you can execute a local version of the State Population API call with the following steps.
+1. In a command prompt, navigate into the `3_DataAccess\tests` folder
+2. Type `node test_rest.js`
+
+This script will call the API and return JSON for the state population of Maine.
+
+Now you can hack up this script to make it call your API, and quickly test and troubleshoot until you get it returning the results you want.
+
+
+
 You have completed the State Pop recipe tutorial.  Congratulations!
 

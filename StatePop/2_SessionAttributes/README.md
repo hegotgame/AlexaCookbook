@@ -72,9 +72,22 @@ The skill also adds code to the `StateRequestIntent` to store each US State into
 
 Finally, the skill adds a RecapIntent that will recite the list of elements currently in the Array.
 ```javascript
+    'RecapIntent': function() {
 
+        // create and store session attributes
+        if (!this.attributes['myList']) {
+            this.attributes['myList'] = [];  // empty array
+        }
+
+        var stateList  = this.attributes['myList'].toString();  // add array element
+        var stateCount =  this.attributes['myList'].length;
+
+        var say = 'Your list has the following ' + stateCount + ' states.  ' + stateList;
+
+        this.emit(':ask', say, 'try again');
+    }
 ```
 
 
-##### Next [3_DataAccess](../3_DataAccess)
+#### Next [3_DataAccess](../3_DataAccess)
 

@@ -10,6 +10,6 @@ At the end of this recipe tutorial, you will know how to:
 
 Ready to start?
 Go to:
-#####  [1_LaunchHelpStop](1_LaunchHelpStop)
+####  [1_LaunchHelpStop](1_LaunchHelpStop)
 
 ![United States Map](https://upload.wikimedia.org/wikipedia/commons/1/1e/Map_of_USA_showing_state_names.png "US States")
