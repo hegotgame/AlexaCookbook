@@ -6,6 +6,7 @@ These projects are individual tutorials that show you the simplest way to add a 
 Let's assume we are a chef, with an idea for a fancy new recipe.  The recipe will require one or more ingredients to be combined to create the finished product.
 Alexa skills follow the same model.  Basic ingredients can be added together to create a robust skill.
 
+##### Before starting
 The lessons assume you have built a skill with the [Alexa Skills Kit](https://developer.amazon.com/ask) .
 
 If you are new to Alexa, first complete the [Decision Tree](https://bit.ly/alexadecisionvid) tutorial.
@@ -14,9 +15,9 @@ If you are new to Alexa, first complete the [Decision Tree](https://bit.ly/alexa
 * Recommend having [GIT](http://www.git.com) available on your command prompt
 * Review the [alexa-sdk](https://www.npmjs.com/package/alexa-sdk) documentation
 
-Ready to begin?
-Choose a recipe below and follow the tutorial steps to create and enhance a new skill.
+##### Ready to get cooking?
 
+Choose a recipe below and follow the tutorial steps to create and enhance a new skill.
 
 *  #### Recipe 1 [State Pop](StatePop)
    We start with a basic skill that plays a welcome message, responds to Help and Stop; and listens for you to say the name of a US State
