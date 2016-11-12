@@ -19,13 +19,13 @@ If you are new to Alexa, first complete the [Decision Tree](https://bit.ly/alexa
 
 Choose a recipe below and follow the tutorial steps to create and enhance a new skill.
 
-*  #### Recipe 1 [State Pop](StatePop)
+### Recipe 1 [State Pop](StatePop)
    We start with a basic skill that plays a welcome message, responds to Help and Stop; and listens for you to say the name of a US State
    We will then add a feature to let you tell the skill your name, which is stored and repeated when you end your conversation.
    Finally, we will add helper functions to look up and report on the Population of each state, using data from a file or from a REST API call.
 
-*  #### Recipe 2 [Coming Soon](Coming Soon)
+### Recipe 2 [Coming Soon](Coming Soon)
    Basic skill with Launch, Help, Stop handlers;
    Add code to have skill write to SQS queue
-   Deploy Single Page Webapp that connects to AWSd
+   Deploy Single Page Webapp that connects to AWS
    Add browser code to long poll SQS and update page
