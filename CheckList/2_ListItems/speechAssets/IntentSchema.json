@@ -1,0 +1,18 @@
+{
+  "intents": [
+    { "intent": "MyNameIsIntent",
+      "slots":
+      [
+        { "name":"myName",
+          "type":"AMAZON.US_FIRST_NAME" }
+      ]
+    },
+    { "intent": "AMAZON.YesIntent" },
+    { "intent": "AMAZON.NoIntent" },
+    { "intent": "AMAZON.StartOverIntent" },
+    { "intent": "AMAZON.RepeatIntent" },
+    { "intent": "AMAZON.HelpIntent" },
+    { "intent": "AMAZON.StopIntent" },
+    { "intent": "AMAZON.CancelIntent" }
+  ]
+}

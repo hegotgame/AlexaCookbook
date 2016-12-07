@@ -1,11 +1,13 @@
 
 var Alexa = require('alexa-sdk');
 
-var https = require('https');
+var CallAPIs = require("./CallAPIs");
+
 
 exports.handler = function(event, context, callback){
 
     var alexa = Alexa.handler(event, context);
+    // alexa.appId = "amzn1.echo-sdk-ams.app.8c97fc78-342a-4e4f-823b-e2f91e7f3474";
     alexa.registerHandlers(handlers);
     alexa.execute();
 
@@ -30,21 +32,33 @@ var handlers = {
 
         var that = this;
 
-        getPopFromArray(myState, function(pop) {
-     // getPopFromAPI(myState, function(pop) {
+        // getPopFromArray(myState, pop => {
+        // CallAPIs.getPopMock(myState, pop => {
+        // CallAPIs.getPopFromArray(myState, pop => {
+
+        CallAPIs.getPopFromAPI_POST(myState, pop => {
 
             say = 'The population of ' + myState + ' is ' + pop;
-            that.emit(':ask', say, 'try again');
+
+            console.log("say = " + say);
+
+            this.emit(':ask', say, 'try again');
+
         });
 
     },
     'MyNameIsIntent': function() {
 
         var myName = this.event.request.intent.slots.myName.value;
+        var say = "";
 
-        // create and store session attributes
-        this.attributes['myName'] = myName;
-        var say = 'Hi ' + myName + '!';
+        if (myName == null) { // no slot
+            say = 'You can tell me your name, for example, you can say my name is Natasha.';
+        } else {
+            // create and store session attributes
+            this.attributes['myName'] = myName;
+            say = 'Hi ' + myName + '!';
+        }
 
         this.emit(':ask', say, 'try again');
     },
@@ -81,56 +95,3 @@ var handlers = {
 // end of handlers
 
 // ---------------------------------------------------  User Defined Functions ---------------
-
-function getPopFromArray (myState, callback) {
-    var population = 0;
-    var rank = 0;
-
-    var dataset = require('./datafiles/dataset.js');  // separate file also deployed to Lambda in ZIP archive
-
-    for (var i = 0; i < dataset.length; i++) {
-        if (dataset[i].Name.toLowerCase() === myState.toLowerCase() ) {
-            population = dataset[i].population;
-            rank = dataset[i].rank;
-
-        }
-    }
-    callback(population);
-}
-
-function getPopFromAPI (myState, callback) {
-    var population = 0;
-    var rank = 0;
-
-    var post_data = {"usstate": myState};
-
-    var post_options = {
-        host:  'rmwum5l4zc.execute-api.us-east-1.amazonaws.com',
-        port: '443',
-        path: '/prod/stateresource',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(JSON.stringify(post_data))
-        } 
-    };
-    var post_req = https.request(post_options, function(res) {
-        res.setEncoding('utf8');
-        var returnData = "";
-        res.on('data', function (chunk) {
-            returnData += chunk;
-        });
-        res.on('end', function () {
-            // this particular API returns a JSON structure:
-            // returnData: {"usstate":"Delaware","attributes":[{"population":900000},{"rank":45}]}
-
-            population = JSON.parse(returnData).attributes[0].population;
-
-            callback(population);
-
-        });
-    });
-    post_req.write(JSON.stringify(post_data));
-    post_req.end();
-
-}
