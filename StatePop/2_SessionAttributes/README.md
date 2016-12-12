@@ -37,16 +37,22 @@ The skill's adds a `MyNameIsIntent` and uses the built-in slot type `AMAZON.US_S
       ]
 ```
 The handler for this will store the myName slot value to session.attributes for use later in the conversation.
+Notice, you should check to see if the slot value exists. It is possible that the user just says "My Name Is" in which case the slot is undefined.
+The `if()` block below accomplishes this.
 
 ```javascript
     'MyNameIsIntent': function() {
 
         var myName = this.event.request.intent.slots.myName.value;
+        var say = "";
 
-        // create and store session attributes
-        this.attributes['myName'] = myName;
-
-        var say = 'Hi ' + myName;
+        if (myName == null) { // no slot
+            say = 'You can tell me your name, for example, you can say my name is Natasha.';
+        } else {
+            // create and store session attributes
+            this.attributes['myName'] = myName;
+            say = 'Hi ' + myName + '!';
+        }
 
         this.emit(':ask', say, 'try again');
     },

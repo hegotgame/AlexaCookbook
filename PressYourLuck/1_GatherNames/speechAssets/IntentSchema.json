@@ -2,14 +2,24 @@
 {
   "intents": [
     {
-      "intent": "StateRequestIntent",
+      "intent": "NumberIntent",
       "slots":[
         {
-          "name":"usstate",
-          "type":"AMAZON.US_STATE"
+          "name":"myNumber",
+          "type":"AMAZON.NUMBER"
         }
       ]
     },
+    {
+      "intent": "MyNameIsIntent",
+      "slots":[
+        {
+          "name":"myName",
+          "type":"AMAZON.US_FIRST_NAME"
+        }
+      ]
+    },
+
     {
       "intent": "AMAZON.StartOverIntent"
     },

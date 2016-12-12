@@ -1,6 +1,6 @@
 <html>
 
-<head>
+<link>
     <script type="text/javascript" src="./bower_components/mqttws/mqttws31.js"></script>
     <script type="text/javascript" src="./bower_components/moment/moment.js"></script>
     <script type="text/javascript" src="./bower_components/crypto-js/crypto-js.js"></script>
@@ -11,7 +11,10 @@
     <script type="text/javascript" src="./js/aws_sigv4.js"></script>
     <script type="text/javascript" src="./js/aws_iot.js"></script>
     <script type="text/javascript" src="./js/colors.js"></script>
-    <script type="text/javascript" src="./js/prettyPrint.js"></script>
+    <script type="text/javascript" src="./js/prettyprint.js"></script>
+
+    <script type="text/javascript" src="https://online.tableau.com/javascripts/api/tableau-2.js"></script>
+    <script type="text/javascript" src="js/tableauEmbed.js"></script>
 
     <script type="text/javascript">
     	/* globals AWS:false payload:true colors createMQTTClient $*/
@@ -247,6 +250,7 @@
         function init() {
             // alert('hey init');
             updateReport("{}");
+            initViz();
 
         }
         function updateReport(data) {
@@ -289,28 +293,43 @@
         function renderElement(key, objkey) {
             var prefix = key.substring(0,4);
             var returnstring = "";
+            var customStyle = "";
             switch(prefix) {
                 case "name":
-                    returnstring = "<span style='background-color:lightblue; font-size:14pt'>" + objkey + "</span>";
+                    customStyle = 'background-color:lightblue; font-size:14pt';
+                    returnstring = "<span style='" + customStyle + "'>" + objkey + "</span>";
                     break;
                 case "valu":
-                    returnstring = "<span style='background-color:deepskyblue; font-size:14pt; color:black'>" + objkey + "</span>";
-
+                    customStyle = 'background-color:deepskyblue; font-size:14pt; color:black; font-weight:bold';
+                    returnstring = "<span style='" + customStyle + "'>" + objkey + "</span>";
+                    filterState(objkey);
                     break;
+                case "attr":
+                    customStyle = 'background-color:gray; font-size:14pt; color:white;';
+                    returnstring = "<span style='" + customStyle + "'>" + objkey + "</span>";
+                    break;
+                case "inte":
+                    customStyle = 'background-color:gray; font-size:14pt; color:white';
+                    returnstring = "<span style='" + customStyle + "'>" + objkey + "</span>";
+                    break;
+
                 default:
                     returnstring = objkey;
             }
+            // returnstring = "<span style='" + customStyle + "'>" + objkey + "</span>";
             return returnstring;
 
         }
 
+        function setMap() {
 
+        }
 
     </script>
     <!--
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     -->
-    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/fonts.css"></link>
     <link rel="stylesheet" href="./css/index.css"></link>
 </head>
 
@@ -318,7 +337,19 @@
     <h2>Skill Inspector</h2>
     <!--<div id="window1" class="open" ></div>-->
     <!--<div id="window2" class="open" ></div>-->
-    <div id="eventreport" class="eventreportclass">er</div>
+    <div id="nav" >
+        <input type="button" value="MA" onClick="filterState('Massachusetts');" >
+        <input type="button" value="NY" onClick="filterState('New York');" >
+        <input type="button" value="NC" onClick="filterState('North Carolina');" >
+        <input type="button" value="FL" onClick="filterState('Florida');" >
+
+    </div>
+
+
+    <div id="vizContainer" ></div>
+
+    <div id="eventreport" class="eventreportclass"></div>
+
 
 
 </body>

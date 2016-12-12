@@ -1,4 +1,5 @@
 var https = require('https');
+var aws = require('aws-sdk');
 
 module.exports = {
 
@@ -87,7 +88,7 @@ module.exports = {
 
     },
 
-    getPopFromArray:  function (myState, callback) {
+    getPopFromArray:   (myState, callback) => {
         var population = 0;
         var rank = 0;
 
@@ -102,6 +103,56 @@ module.exports = {
         }
         callback(population);
     },
+
+     setShadow: (pload, config, callback) => {
+        var payloadObj={ "state":
+            {
+                "desired":
+                    pload
+                    // {"ms" : pload}
+                    // {"pump":1}
+            }
+        };
+
+        //Prepare the parameters of the update call
+
+        var paramsUpdate = {
+
+            "thingName" : config.IOT_THING_NAME,
+
+            "payload" : JSON.stringify(payloadObj)
+
+        };
+
+        aws.config.region = config.IOT_BROKER_REGION;
+
+    //Initializing client for IoT
+
+        var iotData = new aws.IotData({endpoint: config.IOT_BROKER_ENDPOINT});
+
+        console.log("new aws.IotData made");
+        console.log("config = " + JSON.stringify(config));
+
+        //Update Device Shadow
+
+        iotData.updateThingShadow(paramsUpdate, function(err, data)  {
+            if (err){
+                console.log("error calling updateThingShadow ", err);
+                callback("not ok");
+
+            }
+            else {
+                console.log("updated your shadow");
+                console.log(data);
+
+                callback("ok");
+
+            }
+
+        });
+
+    },
+
     RandomPhrase: function (listOfPhrases, callback) {
 
         var i = 0;

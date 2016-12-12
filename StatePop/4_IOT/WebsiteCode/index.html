@@ -1,0 +1,362 @@
+<html>
+
+<head>
+    <title>Alexa to AWS IOT to Web Browser</title>
+    <script type="text/javascript" src="./bower_components/mqttws/mqttws31.js"></script>
+    <script type="text/javascript" src="./bower_components/moment/moment.js"></script>
+    <script type="text/javascript" src="./bower_components/crypto-js/crypto-js.js"></script>
+    <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="./bower_components/jquery-color/jquery.color.js"></script>
+    <script type="text/javascript" src="./bower_components/aws-sdk/dist/aws-sdk.min.js"></script>
+
+    <script type="text/javascript" src="./js/aws_sigv4.js"></script>
+    <script type="text/javascript" src="./js/aws_iot.js"></script>
+    <script type="text/javascript" src="./js/colors.js"></script>
+    <script type="text/javascript" src="./js/prettyPrint.js"></script>
+
+    <script type="text/javascript">
+    	/* globals AWS:false payload:true colors createMQTTClient $*/
+        console.log("Starting script");
+
+        const REGION   = 'us-east-1';
+        var mqttClient = undefined;
+
+        AWS.config.region = REGION;
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: 'us-east-1:861f79c1-9085-4e99-b8ce-a9c8d52fca34',
+        });
+        getAWSCredentials();
+
+        // Initialize the Amazon Cognito credentials provider
+        function getAWSCredentials() {
+            AWS.config.credentials.refresh(function(err) {
+               if (err) console.log(err, err.stack); // an error occurred
+               else {                                // successful response);
+                  onCredentialsAvailable(AWS.config.credentials);
+               }
+            });
+         }
+
+        function onCredentialsAvailable(creds) {
+
+            var cid = clientId();
+            console.log('ClientID = ' + cid);
+
+            // create connection to IoT Broker
+            mqttClient = createMQTTClient({
+                regionName: REGION,
+                accessKey: creds.accessKeyId,
+                secretKey: creds.secretAccessKey,
+                sessionToken: creds.sessionToken,
+                endpoint: "a2eshrcp6u0y0c.iot.us-east-1.amazonaws.com",
+                clientId: cid
+            });
+
+            connect(mqttClient);
+
+        }
+
+        function connect(client) {
+           // connect mqtt client
+           client.connect({
+              onSuccess: onConnect,
+              onFailure: onConnectionFailure,
+              useSSL: true,
+              timeout: 30,
+              mqttVersion: 4
+           });
+
+           // set callback handlers
+           client.onConnectionLost = onConnectionLost;
+           client.onMessageArrived = onMessageArrived;
+        }
+
+        // called when the client connects
+        function onConnect() {
+            //show image
+            $('#image').fadeTo("slow" , 1, function() {
+                  // Animation complete.
+                  // show non clickable mouse cursor
+                  $('#image').css('cursor', 'auto');
+
+            });
+
+            $('#image').click(function() {
+               //do nothing
+            });
+
+            // Once a connection has been made, make a subscription and send a message.
+            console.log("onConnect");
+
+            //UPDATE TO MATCH YOUR THINGS
+            mqttClient.subscribe("$aws/things/waterPump/shadow/update/accepted");
+
+//            mqttClient.subscribe("$aws/things/light2/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/light3/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/light4/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/frontlight/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/backlight/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/tv1/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/window1/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/window2/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/window3/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/window4/shadow/update/accepted");
+//            mqttClient.subscribe("$aws/things/frontdoor/shadow/update/accepted");
+            // message = new Paho.MQTT.Message("Hello");
+            // message.destinationName = "alexa/demo/color";
+            // mqttClient.send(message);
+        }
+
+        // called when client can not connect
+        function onConnectionFailure(error) {
+            console.log("Connection failed why");
+            console.log(error);
+        }
+
+        // called when the client loses its connection
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("onConnectionLost:" + responseObject.errorMessage);
+
+               //fade image
+               $('#image').fadeTo("slow" , 0.5, function() {
+                     // Animation complete.
+                     //show clickable mouse cursor
+                     $('#image').css('cursor', 'pointer');
+               });
+
+               // allow user to reconnect when clicking the image
+               $('#image').click(function() {
+                  console.log('Reconnecting with fresh credentials');
+                  getAWSCredentials(); //this will trigger the update of the MQTT client and connection
+               });
+            }
+        }
+
+        // called when a message arrives
+        function onMessageArrived(message) {
+            console.log("onMessageArrived:" + message.payloadString);
+            payload = JSON.parse(message.payloadString);
+
+            updateReport(
+                    JSON.stringify(
+                            payload.state.desired.ms
+                    )
+            );
+
+
+//            console.log("state:"+payload.state);
+//            var color=payload.state.desired.color;
+//            var device=payload.state.desired.device;
+//            var type=payload.state.desired.type;
+//            var percent_on=payload.state.desired.percent_on;
+//            var state=payload.state.desired.state;
+//            if (percent_on>1){percent_on=1;} else if (percent_on<0){percent_on=0;} //constrain to be between 0 and 1
+
+//
+//             if (colors.hasOwnProperty(color)) {
+//
+//               // toggle title & logo on/off
+//               if (color == 'transparent') {
+//                  $('#title').show(600);
+//                  $('#image').show(600);
+//               } else {
+//                  $('#title').hide(600);
+//                  $('#image').hide(600);
+//               }
+//
+//               // change background color
+//               switch (type) {
+//                   case "light":
+//
+//                       $('#'+device).fadeTo("fast",percent_on);
+//                       $('#'+device).animate({
+//                        backgroundColor : color,
+//                        duration: 600
+//                           },
+//                           function completed() { //alert('finished');
+//                           });
+//
+//                       break;
+//                    case "portal": //doors or windows
+//
+//                        switch (state){
+//
+//                            case "closed":
+//                                color = "blue"; /*unlocked but closed*/
+//                            break;
+//                            case "locked":
+//                                color = "green"; /* locked */
+//                            break;
+//                            case "open":
+//                            default:
+//                                color = "red"; /*unlocked and open OR unknown state*/
+//                            break;
+//
+//                        }
+//                        console.log("color "+color);
+//
+//                        if(percent_on==0){
+//                            $('#'+device).addClass("off"); //hide
+//                        } else {
+//                            $('#'+device).removeClass("off"); //show
+//                        }
+//                        $('#'+device).animate({
+//                        backgroundColor : color,
+//                        duration: 600
+//                           },
+//                           function completed() { //alert('finished');
+//                           });
+//
+//                       break;
+//                    case "tv":
+//                        if(percent_on==0){
+//                            $('#'+device+'VolumeControl').addClass("off"); //hide
+//                        } else {
+//                            $('#'+device+'VolumeControl').removeClass("off"); //show
+//                        }
+//
+//                        $('#'+device+'VolumeCurrent').height(percent_on*100+'%');
+//                        $('#'+device+'VolumeRemaining').height((1-percent_on)*100+'%');
+//                        $('#'+device+'VolumeCurrent').text(Math.floor(percent_on*10));
+//                        $('#'+device).fadeTo("fast",1);
+//                        $('#'+device).animate({
+//                        backgroundColor : color,
+//                        duration: 600
+//                           },
+//                           function completed() { //alert('finished');
+//                           });
+//
+//                       break;
+//
+//
+//               }
+//
+//            }
+        } // close onMessageArrive
+
+        // generate a random UUID v4
+        function clientId() {
+           return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+               var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+               return v.toString(16);
+           });
+        }
+
+      //   $(document).ready(function() {
+      //   });
+        function init() {
+            // alert('hey init');
+            updateReport("{}");
+
+            //  test();
+
+        }
+        function updateReport(data) {
+
+//            var tbl = prettyPrint(JSON.parse(data), {
+//                // Config
+//                maxArray: 20, // Set max for array display (default: infinity)
+//                expanded: false, // Expanded view (boolean) (default: true),
+//                maxDepth: 5 // Max member depth (when displaying objects) (default: 3)
+//            });
+//
+//            document.body.insertBefore( tbl, document.body.firstChild );
+            var prettyJson = renderJSON(JSON.parse(data), 1);
+            // prettyList(JSON.parse(data));
+            document.getElementById("eventreport").innerHTML = prettyJson;  // JSON.stringify(data, undefined, 2);
+
+        }
+
+        function renderJSON(obj, level) {
+            'use strict';
+            var indent = level * 10;
+            var extrastyle = "style='margin-left: " + indent +  "px'";
+
+            var keys = [],
+                    retValue = "";
+            for (var key in obj) {
+                if (typeof obj[key] === 'object') {
+                    retValue += "<div class='tree' " + extrastyle + " >" +  renderElement(key, key);
+                    retValue += renderJSON(obj[key], level + 1);
+                    retValue += "</div>";
+                } else {
+                    retValue += "<div class='tree' " + extrastyle + " >" +  key + " = " + renderElement(key, obj[key]) + "</div>";
+                }
+
+                keys.push(key);
+            }
+            return retValue;
+        }
+        function renderElement(key, objkey) {
+            var prefix = key.substring(0,4);
+            var returnstring = "";
+            var customStyle = "";
+            switch(prefix) {
+                case "name":
+                    customStyle = 'background-color:lightblue; font-size:14pt';
+                    break;
+                case "valu":
+                    customStyle = 'background-color:deepskyblue; font-size:14pt; color:black; font-weight:bold';
+                    break;
+                case "attr":
+                    customStyle = 'background-color:gray; font-size:14pt; color:white;';
+                    break;
+                case "inte":
+                    customStyle = 'background-color:gray; font-size:14pt; color:white';
+                    break;
+
+                default:
+                    returnstring = objkey;
+            }
+            returnstring = "<span style='" + customStyle + "'>" + objkey + "</span>";
+            return returnstring;
+
+        }
+        function test() {
+            // var obj = {"animal": "cat"};
+            var data = {
+                        "attributes": {
+                            "myList": [
+                                "Vermont",
+                                "Kansas"
+                            ]
+                        },
+                        "intent": {
+                            "name": "NumberIntent",
+                            "slots": {
+                                "myNumber": {
+                                    "name": "myNumber",
+                                    "value": "3"
+                                }
+                            }
+                        }
+
+            };
+            // alert('hello');
+            var prettyJson = renderJSON(data, 1);
+            // prettyList(JSON.parse(data));
+            document.getElementById("eventreport").innerHTML = prettyJson;  // JSON.stringify(data, undefined, 2);
+
+        }
+
+
+    </script>
+    <!--
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    -->
+    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/index.css"></link>
+</head>
+
+<body onLoad="init();">
+    <h2>Skill Inspector</h2> <a href="#" onClick="test();" >test</a>
+
+    <!--<div id="window1" class="open" ></div>-->
+    <!--<div id="window2" class="open" ></div>-->
+    <div id="eventreport" class="eventreportclass">er</div>
+
+
+</body>
+
+</html>

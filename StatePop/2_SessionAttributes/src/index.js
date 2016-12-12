@@ -31,10 +31,15 @@ var handlers = {
     'MyNameIsIntent': function() {
 
         var myName = this.event.request.intent.slots.myName.value;
+        var say = "";
 
-        // create and store session attributes
-        this.attributes['myName'] = myName;
-        var say = 'Hi ' + myName + '!';
+        if (myName == null) { // no slot
+            say = 'You can tell me your name, for example, you can say my name is Natasha.';
+        } else {
+            // create and store session attributes
+            this.attributes['myName'] = myName;
+            say = 'Hi ' + myName + '!';
+        }
 
         this.emit(':ask', say, 'try again');
     },

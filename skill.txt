@@ -1,0 +1,20 @@
+Felix  what movie is playing in my cinema?
+Jacob  how are my Jenkins builds doing?
+Chris  start scorekeeper, add player Chris, Rob.  Player gained points, lost points, what is the score
+  Anusha  book a conference room.. check Exchange if room is occupied
+Tom     Plex movie collection - play movie
+Abrian  when do i need to leave for my train/flight
+Dave    check my meetings, recommend for calendar
+Florentine  is my insurance okay?  recommends changes to coverage
+Anu    give me top news from Tech Crunch, Bloomberg
+Srini  travel recommend destinations, schedule
+Ricardo  diabetes helper- i am running low on sugar, notify someone
+Lars   order happy socks for me
+  Derrick questions about products, configurations, limits
+Nathan  can you remind me how utterances intents work
+Rich    trouble ticketing system... how is the queue today
+  Amit    alexa calls NOC oncall users, using Twilio, start conf call; check status of hardware
+Slovenia  shoe recommendation service
+Long   what are the bestseller books.. reserve a book at the nearest library
+choose your own adventure game
+Pat  Alexa, make a route 53 DNS change

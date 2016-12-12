@@ -1,0 +1,144 @@
+<html>
+
+<head>
+    <title>Alexa to AWS IOT to Web Browser</title>
+    <link rel="stylesheet" href="./css/webapp.css"></link>
+
+    <script type="text/javascript" src="./bower_components/mqttws/mqttws31.js"></script>
+    <script type="text/javascript" src="./bower_components/moment/moment.js"></script>
+    <script type="text/javascript" src="./bower_components/crypto-js/crypto-js.js"></script>
+    <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="./bower_components/jquery-color/jquery.color.js"></script>
+    <script type="text/javascript" src="./bower_components/aws-sdk/dist/aws-sdk.min.js"></script>
+
+    <script type="text/javascript" src="./js/aws_sigv4.js"></script>
+    <script type="text/javascript" src="./js/aws_iot.js"></script>
+
+    <script type="text/javascript" src="./js/connectAsThing.js"></script>
+    <script type="text/javascript" src="./js/updateDom.js"></script>
+
+    <script type="text/javascript" src="https://online.tableau.com/javascripts/api/tableau-2.js"></script>
+    <script type="text/javascript" src="js/tableauEmbed.js"></script>
+
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+    <!--<link rel="stylesheet" href="./css/fonts.css">-->
+    <link rel="stylesheet" href="./css/index.css"></link>
+
+</head>
+
+<body onLoad="init();" style="padding-top: 65px;" } >
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+
+            <a class="navbar-brand" href="#" >Alexa IOT Webapp</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <div>
+                <ul class="nav navbar-nav">
+                    <li ><a href="https://console.aws.amazon.com/iot" target="_blank">
+                        AWS IOT Console
+                    </a></li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <!--<li><a href="#" onClick='test();' >Test</a></li>-->
+                    <li><a href="https://developer.amazon.com/blogs/post/Tx3828JHC7O9GZ9/Using-Alexa-Skills-Kit-and-AWS-IoT-to-Voice-Control-Connected-Devices" target="_blank" >Lambda update IOT Thing</a></li>
+                    <li><a href="#" onClick="alert('This page is implemented as an IOT virtual Thing, called waterPump.\nDocumentation on the MQTT browser client implementation coming soon.\nSee included Javascript.');">IOT MQTT virtual Thing</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container-fluid">
+
+        <div id="attributes" class="col-sm-3">
+
+            <div class="panel panel-default ">
+                <!--<div class="panel-heading ">-->
+                    <div class="columntitle">session.attributes
+                        <input type="button" class="testbutton" value="clear" onClick="clearattributes();" >
+                        <input type="button" class="testbutton" value="test" onClick="test();" >
+                    </div>
+                <!--</div>-->
+
+                <div class="panel-info ">
+
+                    <div id="eventreport" class="eventreportclass" ></div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-5" id="mainpanel">
+            <!--<div class="columntitle">Main Panel Header</div>-->
+            <div class="panel panel-default ">
+                <div id="nav" >
+                    <input type="button" value="MA" onClick="filterState('Massachusetts');" >
+                    <input type="button" value="NY" onClick="filterState('New York');" >
+                    <input type="button" value="NC" onClick="filterState('North Carolina');" >
+                    <input type="button" value="FL" onClick="filterState('Florida');" >
+
+                </div>
+
+
+                <div id="vizContainer" ></div>
+
+
+            </div>
+        </div>
+        <div  class="col-sm-4" id="chatpanel">
+
+            <div class="panel panel-default ">
+                <div class="columntitle">Interactions &nbsp;&nbsp;
+                    <input type="button" class="testbutton" value="clear" onClick="clearchat();" >
+                    <input type="button" class="testbutton" value="test me" onClick="addchat('hello!', 'bubble me');" >&nbsp;
+                    <input type="button" class="testbutton" value="test you" onClick="addchat('how you doin?', 'bubble you');" >
+
+                </div>
+                <div class="panel-info ">
+
+                        <div id="chatbox" class="chat" >
+                            <!--<div class="bubble me">Hello there!</div>-->
+                            <!--<div class="bubble you">Hi. I'm an expandeable chat box with box shadow. How are you? I expand horizontally and vertically, as you can see here.</div>-->
+                            <!--<div class="bubble me">Awesome.</div>-->
+                        </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+            <p class="navbar-text pull-left">
+
+            <table class="table1">
+                <tr><td class="tdlabel">Status</td><td class="tdvalue"><span id="MQTTstatus">STOPPED</span></td></tr>
+                <tr><td class="tdlabel">Identity Pool ID</td><td class="tdvaluesmall"><span id="IdentityPoolId"></span></td></tr>
+            </table>
+            </p>
+            <p class="navbar-text pull-right">
+            <table class="table1">
+                <tr><td class="tdlabel">Subscribe Topic</td><td class="tdvaluesmall"><span id="SubscribeTopic"></span></td></tr>
+                <tr><td class="tdlabel">MQTT Endpoint</td><td class="tdvaluesmall"><span id="mqttEndpoint"></span></td></tr>
+            </table>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+
+</html>

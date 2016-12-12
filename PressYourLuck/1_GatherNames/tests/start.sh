@@ -3,9 +3,9 @@
 #
 
 
-# lambda-local -l ../src/index.js -h handler -e events/launch.js
+lambda-local -l ../src/index.js -h handler -e events/launch.js
 
-  lambda-local -l ../src/index.js -h handler -e events/intent-slot.js
+lambda-local -l ../src/index.js -h handler -e events/intent-slot.js
 
 # lambda-local -l ../src/index.js -h handler -e events/help.js
 # lambda-local -l ../src/index.js -h handler -e events/stop.js
